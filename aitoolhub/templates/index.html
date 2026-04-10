@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ─── Hero ──────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      {{ all_tools_count }}+ AI Tools Listed
+    </div>
+
+    <h1 class="hero-title">
+      Discover the Best<br>
+      <em>AI Tools</em> for<br>
+      Every Task
+    </h1>
+
+    <p class="hero-subtitle">
+      Explore hundreds of AI-powered tools curated for writers, developers, designers, marketers, and teams. Find the
+      right tool in seconds.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/tools" class="btn btn-primary btn-lg">
+        🚀 Explore Tools
+      </a>
+      <a href="/categories" class="btn btn-ghost btn-lg">
+        Browse Categories
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-number">{{ all_tools_count }}+</span>
+        <span class="hero-stat-label">Tools Listed</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-number">7</span>
+        <span class="hero-stat-label">Categories</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-number">Free</span>
+        <span class="hero-stat-label">To Browse</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-dashboard">
+      <div class="hero-dash-header">
+        <span class="hero-dash-title">✦ Featured AI Tools</span>
+        <span class="hero-dash-badge">Live</span>
+      </div>
+      {% for tool in featured_tools[:0] %}
+      <a href="/tools/{{ tool.slug }}" class="mini-tool-row" style="text-decoration:none;color:inherit;">
+        <div class="mini-tool-logo">
+          {% if tool.logo_url %}
+          <img src="{{ tool.logo_url }}" alt="{{ tool.name }}"
+            onerror="this.parentElement.innerHTML=getCatEmoji('{{ tool.category }}')">
+          {% else %}
+          {{ '🤖' }}
+          {% endif %}
+        </div>
+        <div class="mini-tool-info">
+          <div class="mini-tool-name">{{ tool.name }}</div>
+          <div class="mini-tool-cat">{{ tool.category }}</div>
+        </div>
+        <span
+          class="mini-tool-tag {% if tool.pricing == 'Free' %}tag-free{% elif tool.pricing == 'Freemium' %}tag-freemium{% else %}tag-paid{% endif %}">
+          {{ tool.pricing }}
+        </span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ─── Search ────────────────────────────────────────── -->
+<div class="search-section">
+  <div class="search-wrapper">
+    <span class="search-icon-main">🔍</span>
+    <input type="text" id="hero-search" class="search-input" placeholder="Search AI tools, categories, or tags..."
+      autocomplete="off">
+    <button class="btn btn-primary search-btn"
+      onclick="window.location.href='/tools?q='+document.getElementById('hero-search').value">
+      Search
+    </button>
+  </div>
+  <div id="search-dropdown" class="search-dropdown"></div>
+</div>
+
+<!-- ─── Featured Tools ────────────────────────────────── -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <h2 class="section-title">Featured Tools</h2>
+      <p class="section-subtitle">Hand-picked AI tools worth trying</p>
+    </div>
+    <a href="/tools" class="btn btn-ghost btn-sm">View all →</a>
+  </div>
+
+  <div class="tools-grid">
+    {% for tool in featured_tools %}
+    <div class="tool-card animate-fade-up" onclick="window.location.href='/tools/{{ tool.slug }}'">
+      <div class="tool-card-header">
+        <div class="tool-logo">
+          {% if tool.logo_url %}
+          <img src="{{ tool.logo_url }}" alt="{{ tool.name }}"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="tool-logo-fallback" style="display:none">🤖</span>
+          {% else %}
+          <span class="tool-logo-fallback">🤖</span>
+          {% endif %}
+        </div>
+        <div class="tool-card-meta">
+          <div class="tool-name">{{ tool.name }}</div>
+          <span class="tool-category-badge">{{ tool.category }}</span>
+        </div>
+      </div>
+      <p class="tool-description">{{ tool.short_description or tool.description[:160] }}</p>
+      <div class="tool-card-footer">
+        <span
+          class="tool-pricing-tag {% if tool.pricing == 'Free' %}tag-free{% elif tool.pricing == 'Freemium' %}tag-freemium{% else %}tag-paid{% endif %}">
+          {{ tool.pricing }}
+        </span>
+        <div class="tool-card-actions">
+          <a href="/tools/{{ tool.slug }}" class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Details</a>
+          <a href="{{ tool.website_url }}" target="_blank" rel="noopener" class="btn btn-primary btn-sm"
+            onclick="event.stopPropagation()">Visit ↗</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ─── Categories ────────────────────────────────────── -->
+<div class="section" style="padding-top:0;">
+  <div class="section-header">
+    <div>
+      <h2 class="section-title">Browse by Category</h2>
+      <p class="section-subtitle">Find tools for your specific use case</p>
+    </div>
+    <a href="/categories" class="btn btn-ghost btn-sm">All categories →</a>
+  </div>
+
+  <div class="categories-grid">
+    {% for cat in categories %}
+    <a href="/categories/{{ cat.name | lower | replace(' ', '-') }}" class="category-card animate-fade-up">
+      <span class="category-icon">{{ cat.icon }}</span>
+      <div class="category-name">{{ cat.name }}</div>
+      <div class="category-desc">{{ cat.description }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ─── CTA ───────────────────────────────────────────── -->
+<div style="padding: 0 24px 80px; max-width: 1280px; margin: 0 auto;">
+  <div
+    style="background: var(--accent); border-radius: var(--radius-xl); padding: 56px 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap;">
+    <div>
+      <h2
+        style="font-family: var(--font-display); font-size: 1.8rem; color: white; letter-spacing: -0.02em; margin-bottom: 8px;">
+        Know a great AI tool?
+      </h2>
+      <p style="color: rgba(255,255,255,0.65); max-width: 400px;">
+        Help the community by submitting AI tools that deserve to be discovered.
+      </p>
+    </div>
+    <a href="/submit" class="btn btn-yellow btn-lg">
+      + Submit a Tool
+    </a>
+  </div>
+</div>
+
+{% endblock %}

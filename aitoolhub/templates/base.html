@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AIToolHub — Discover the Best AI Tools{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Browse and discover the best AI tools for writing, coding, image generation, video, productivity, and more.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}AIToolHub{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Discover the best AI tools for every task.{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- ─── Navbar ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon">✦</div>
+      AIToolHub
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="/" {% if request.path == '/' %}class="active"{% endif %}>Home</a></li>
+      <li><a href="/categories" {% if request.path == '/categories' %}class="active"{% endif %}>Categories</a></li>
+      <li><a href="/tools" {% if request.path == '/tools' %}class="active"{% endif %}>All Tools</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="nav-search-mini">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="nav-search" placeholder="Search tools…" autocomplete="off">
+      </div>
+      <a href="/submit" class="btn btn-primary btn-sm">
+        + Submit Tool
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── Content ───────────────────────────────────────── -->
+{% block content %}{% endblock %}
+
+<!-- ─── Footer ────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo" style="margin:0;">
+        <div class="nav-logo-icon">✦</div>
+        AIToolHub
+      </a>
+      <p>Discover and explore the best AI tools for every task. Updated regularly with new tools and categories.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Browse</h4>
+      <ul>
+        <li><a href="/tools">All Tools</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/tools?pricing=Free">Free Tools</a></li>
+        <li><a href="/tools?pricing=Freemium">Freemium</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <ul>
+        {% for cat in categories[:4] %}
+        <li><a href="/categories/{{ cat.name | lower | replace(' ', '-') }}">{{ cat.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="/submit">Submit a Tool</a></li>
+        <li><a href="/tools">Browse Tools</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 AIToolHub. All rights reserved.</span>
+    <span>Built for AI enthusiasts</span>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>
