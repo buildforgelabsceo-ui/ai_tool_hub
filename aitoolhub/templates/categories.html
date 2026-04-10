@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}AI Tool Categories — AIToolHub{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <div class="breadcrumb">
+    <a href="/">Home</a>
+    <span>›</span>
+    <span>Categories</span>
+  </div>
+
+  <div class="page-header">
+    <h1 class="page-title">AI Tool Categories</h1>
+    <p class="page-subtitle">Explore AI tools organized by what they do best</p>
+  </div>
+
+  <div class="categories-grid">
+    {% for cat in categories %}
+    <a href="/categories/{{ cat.name | lower | replace(' ', '-') }}" class="category-card">
+      <span class="category-icon">{{ cat.icon }}</span>
+      <div class="category-name">{{ cat.name }}</div>
+      <div class="category-desc">{{ cat.description }}</div>
+      <div class="category-count">{{ cat.count }} tool{{ 's' if cat.count != 1 else '' }}</div>
+    </a>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

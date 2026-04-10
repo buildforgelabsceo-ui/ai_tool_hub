@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tool.name }} — AIToolHub{% endblock %}
+{% block meta_description %}{{ tool.short_description or tool.description[:160] }}{% endblock %}
+{% block og_title %}{{ tool.name }} — AIToolHub{% endblock %}
+{% block og_description %}{{ tool.short_description or tool.description[:160] }}{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="/">Home</a>
+    <span>›</span>
+    <a href="/tools">All Tools</a>
+    <span>›</span>
+    <a href="/categories/{{ tool.category | lower | replace(' ', '-') }}">{{ tool.category }}</a>
+    <span>›</span>
+    <span>{{ tool.name }}</span>
+  </div>
+
+  <div class="tool-detail-grid">
+
+    <!-- Main Content -->
+    <div class="tool-detail-main">
+      <div class="tool-detail-header">
+        <div class="tool-detail-logo">
+          {% if tool.logo_url %}
+          <img src="{{ tool.logo_url }}" alt="{{ tool.name }}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span style="display:none;font-size:2.5rem;">🤖</span>
+          {% else %}
+          <span style="font-size:2.5rem;">🤖</span>
+          {% endif %}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <h1 class="tool-detail-title">{{ tool.name }}</h1>
+          <div class="tool-detail-badges">
+            <span class="badge badge-category">{{ tool.category }}</span>
+            <span class="badge {% if tool.pricing == 'Free' %}tag-free{% elif tool.pricing == 'Freemium' %}tag-freemium{% else %}tag-paid{% endif %}">
+              {{ tool.pricing }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <p class="tool-detail-description">{{ tool.description }}</p>
+
+      {% if tool.tags %}
+      <div class="tags-section">
+        <h4>Tags</h4>
+        <div class="tags-list">
+          {% for tag in tool.tags.split(',') %}
+          {% set tag = tag.strip() %}
+          {% if tag %}
+          <a href="/tools?q={{ tag | urlencode }}" class="tag-pill">{{ tag }}</a>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="tool-detail-sidebar">
+
+      <!-- CTA Card -->
+      <div class="sidebar-card" style="background: var(--accent); color: white; border-color: transparent;">
+        <div style="font-size:0.82rem;font-weight:600;opacity:0.65;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Official Website</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:18px;opacity:0.9;">Try {{ tool.name }} today</div>
+        <a href="{{ tool.website_url }}" target="_blank" rel="noopener" class="btn btn-yellow" style="width:100%;justify-content:center;">
+          Visit {{ tool.name }} ↗
+        </a>
+      </div>
+
+      <!-- Info Card -->
+      <div class="sidebar-card">
+        <h3>Tool Info</h3>
+        <div class="info-row">
+          <span class="info-row-label">Category</span>
+          <a href="/categories/{{ tool.category | lower | replace(' ', '-') }}" class="info-row-value" style="color:var(--blue);">{{ tool.category }}</a>
+        </div>
+        <div class="info-row">
+          <span class="info-row-label">Pricing</span>
+          <span class="info-row-value">{{ tool.pricing }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row-label">Added</span>
+          <span class="info-row-value">{{ tool.date_added.strftime('%b %Y') }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row-label">Website</span>
+          <a href="{{ tool.website_url }}" target="_blank" rel="noopener" class="info-row-value" style="color:var(--blue);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;text-align:right;">
+            {{ tool.website_url | replace('https://', '') | replace('http://', '') | truncate(30) }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Related Tools -->
+      {% if related_tools %}
+      <div class="sidebar-card">
+        <h3>Related Tools</h3>
+        <div class="related-grid">
+          {% for related in related_tools %}
+          <a href="/tools/{{ related.slug }}" class="related-card">
+            <div class="related-logo">
+              {% if related.logo_url %}
+              <img src="{{ related.logo_url }}" alt="{{ related.name }}" onerror="this.parentElement.innerHTML='🤖'">
+              {% else %}
+              🤖
+              {% endif %}
+            </div>
+            <div>
+              <div class="related-name">{{ related.name }}</div>
+              <div class="related-cat">{{ related.pricing }}</div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

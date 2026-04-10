@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Submit an AI Tool — AIToolHub{% endblock %}
+
+{% block content %}
+<div class="submit-container">
+
+  <div class="breadcrumb">
+    <a href="/">Home</a>
+    <span>›</span>
+    <span>Submit a Tool</span>
+  </div>
+
+  {% if success %}
+  <div class="form-card">
+    <div class="success-card">
+      <div class="success-icon">✓</div>
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;letter-spacing:-0.02em;margin-bottom:10px;">Tool
+        Submitted!</h2>
+      <p style="color:var(--text-secondary);margin-bottom:28px;">
+        <strong>{{ tool.name }}</strong> has been added to AIToolHub. Thanks for contributing!
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="/tools/{{ tool.slug }}" class="btn btn-primary">View Tool Page</a>
+        <a href="/submit" class="btn btn-ghost">Submit Another</a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+
+  <div class="page-header">
+    <h1 class="page-title">Submit an AI Tool</h1>
+    <p class="page-subtitle">Help the community discover a great AI tool</p>
+  </div>
+
+  {% if errors %}
+  <div class="alert alert-error">
+    <span>⚠️</span>
+    <ul>
+      {% for error in errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="form-card">
+    <form method="POST" action="/submit" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" for="name">Tool Name <span>*</span></label>
+        <input type="text" id="name" name="name" class="form-input" placeholder="e.g. ChatGPT, Midjourney..."
+          value="{{ form_data.name if form_data else '' }}" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="website_url">Website URL <span>*</span></label>
+          <input type="url" id="website_url" name="website_url" class="form-input" placeholder="https://example.com"
+            value="{{ form_data.website_url if form_data else '' }}" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="logo_url">Logo URL</label>
+          <input type="url" id="logo_url" name="logo_url" class="form-input" placeholder="https://example.com/logo.png"
+            value="{{ form_data.logo_url if form_data else '' }}">
+          <div class="form-hint">Direct link to the tool's logo image</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="short_description">Short Description</label>
+        <input type="text" id="short_description" name="short_description" class="form-input"
+          placeholder="One sentence that captures what this tool does (max 200 chars)" maxlength="200"
+          value="{{ form_data.short_description if form_data else '' }}">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="description">Full Description <span>*</span></label>
+        <textarea id="description" name="description" class="form-textarea"
+          placeholder="Describe what this AI tool does, who it's for, and what makes it unique..."
+          required>{{ form_data.description if form_data else '' }}</textarea>
+        <div class="form-hint"><span id="desc-counter">0</span> characters</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="category">Category <span>*</span></label>
+          <select id="category" name="category" class="form-select" required>
+            <option value="">Select a category...</option>
+            {% for cat in categories %}
+            <option value="{{ cat.name }}" {% if form_data and form_data.category==cat.name %}selected{% endif %}>
+              {{ cat.icon }} {{ cat.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="pricing">Pricing Model</label>
+          <select id="pricing" name="pricing" class="form-select">
+            {% for price in ['Freemium', 'Free', 'Paid', 'Free Trial', 'Open Source'] %}
+            <option value="{{ price }}" {% if form_data and form_data.pricing==price %}selected{% elif not form_data and
+              price=='Freemium' %}selected{% endif %}>
+              {{ price }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="tags">Tags</label>
+        <input type="text" id="tags" name="tags" class="form-input"
+          placeholder="chatbot, writing, productivity, GPT-4..." value="{{ form_data.tags if form_data else '' }}">
+        <div class="form-hint">Comma-separated tags to help users find this tool</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary"
+        style="width:100%;justify-content:center;padding:14px;font-size:1rem;border-radius:var(--radius-sm);">
+        Submit Tool →
+      </button>
+
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

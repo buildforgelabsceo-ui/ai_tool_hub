@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if current_category %}{{ current_category }} — AIToolHub{% elif current_search %}Search: {{ current_search }} — AIToolHub{% else %}All AI Tools — AIToolHub{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="/">Home</a>
+    <span>›</span>
+    {% if current_category %}
+    <a href="/categories">Categories</a>
+    <span>›</span>
+    <span>{{ current_category }}</span>
+    {% elif current_search %}
+    <a href="/tools">All Tools</a>
+    <span>›</span>
+    <span>Search: "{{ current_search }}"</span>
+    {% else %}
+    <span>All Tools</span>
+    {% endif %}
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    {% if matched_cat %}
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+      <span style="font-size:2.5rem;">{{ matched_cat.icon }}</span>
+      <h1 class="page-title" style="margin:0;">{{ current_category }}</h1>
+    </div>
+    <p class="page-subtitle">{{ matched_cat.description }}</p>
+    {% elif current_search %}
+    <h1 class="page-title">Results for "{{ current_search }}"</h1>
+    <p class="page-subtitle">
+      {% if tools %}{{ tools.total }} tool{{ 's' if tools.total != 1 else '' }} found{% elif tools_list %}{{ tools_list | length }} tool{{ 's' if tools_list | length != 1 else '' }} found{% endif %}
+    </p>
+    {% else %}
+    <h1 class="page-title">All AI Tools</h1>
+    <p class="page-subtitle">Browse our complete directory of AI tools</p>
+    {% endif %}
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="filters-search">
+      <input
+        type="text"
+        id="tools-search"
+        placeholder="🔍 Search tools..."
+        value="{{ current_search }}"
+        autocomplete="off"
+      >
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Pricing:</span>
+      <a class="filter-chip {% if not current_pricing %}active{% endif %}" href="?{% if current_search %}q={{ current_search }}&{% endif %}{% if current_category %}category={{ current_category | urlencode }}&{% endif %}">All</a>
+      {% for pricing in ['Free', 'Freemium', 'Paid'] %}
+      <a class="filter-chip {% if current_pricing == pricing %}active{% endif %}"
+         href="?pricing={{ pricing }}{% if current_search %}&q={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category | urlencode }}{% endif %}">
+        {{ pricing }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Tools Grid -->
+  {% set tool_items = tools_list if tools_list is defined else (tools.items if tools else []) %}
+
+  {% if tool_items %}
+  <div class="tools-grid">
+    {% for tool in tool_items %}
+    <div class="tool-card" onclick="window.location.href='/tools/{{ tool.slug }}'">
+      <div class="tool-card-header">
+        <div class="tool-logo">
+          {% if tool.logo_url %}
+          <img src="{{ tool.logo_url }}" alt="{{ tool.name }}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="tool-logo-fallback" style="display:none">🤖</span>
+          {% else %}
+          <span class="tool-logo-fallback">🤖</span>
+          {% endif %}
+        </div>
+        <div class="tool-card-meta">
+          <div class="tool-name">{{ tool.name }}</div>
+          <a href="/categories/{{ tool.category | lower | replace(' ', '-') }}" class="tool-category-badge" onclick="event.stopPropagation()">{{ tool.category }}</a>
+        </div>
+      </div>
+      <p class="tool-description">{{ tool.short_description or tool.description[:180] }}</p>
+      <div class="tool-card-footer">
+        <span class="tool-pricing-tag {% if tool.pricing == 'Free' %}tag-free{% elif tool.pricing == 'Freemium' %}tag-freemium{% else %}tag-paid{% endif %}">
+          {{ tool.pricing }}
+        </span>
+        <div class="tool-card-actions">
+          <a href="/tools/{{ tool.slug }}" class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Details</a>
+          <a href="{{ tool.website_url }}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" onclick="event.stopPropagation()">Visit ↗</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination (only for paginated view) -->
+  {% if tools and tools.pages > 1 %}
+  <div class="pagination">
+    {% if tools.has_prev %}
+    <a href="?page={{ tools.prev_num }}{% if current_search %}&q={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category | urlencode }}{% endif %}{% if current_pricing %}&pricing={{ current_pricing }}{% endif %}">‹</a>
+    {% endif %}
+
+    {% for page_num in tools.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+      {% if page_num %}
+        {% if page_num == tools.page %}
+        <span class="current">{{ page_num }}</span>
+        {% else %}
+        <a href="?page={{ page_num }}{% if current_search %}&q={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category | urlencode }}{% endif %}{% if current_pricing %}&pricing={{ current_pricing }}{% endif %}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        <span>…</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if tools.has_next %}
+    <a href="?page={{ tools.next_num }}{% if current_search %}&q={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category | urlencode }}{% endif %}{% if current_pricing %}&pricing={{ current_pricing }}{% endif %}">›</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">🔍</div>
+    <h3>No tools found</h3>
+    <p>We couldn't find any tools matching your search. Try a different keyword or browse all categories.</p>
+    <a href="/tools" class="btn btn-primary">Browse All Tools</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
