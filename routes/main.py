@@ -2,9 +2,13 @@ from flask import Blueprint, render_template, request, jsonify, abort
 from ..models.tool import Tool
 from ..models import db
 from ..data.seed import CATEGORIES
+from flask import send_from_directory
 
 main = Blueprint('main', __name__)
 
+@main.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory('static', 'sitemap.xml')
 @main.route('/')
 def index():
     featured_tools = Tool.query.filter_by(featured=True).limit(6).all()
