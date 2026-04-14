@@ -5,10 +5,6 @@ from ..data.seed import CATEGORIES
 from flask import send_from_directory
 
 main = Blueprint('main', __name__)
-
-@main.route('/sitemap.xml')
-def sitemap():
-    return "SITEMAP WORKS"
     
 @main.route('/')
 def index():
