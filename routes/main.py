@@ -8,7 +8,8 @@ main = Blueprint('main', __name__)
 
 @main.route('/sitemap.xml')
 def sitemap():
-    return send_from_directory('static', 'sitemap.xml')
+    return "SITEMAP WORKS"
+    
 @main.route('/')
 def index():
     featured_tools = Tool.query.filter_by(featured=True).limit(6).all()
